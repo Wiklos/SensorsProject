@@ -1,6 +1,7 @@
 package math.uni.lodz.pl.sensors;
 
 import android.app.Service;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -148,6 +149,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void gotoMaps(View view)
+    {
+        startActivity(new Intent(getApplicationContext(), MapsActivity.class));
     }
 
 }
