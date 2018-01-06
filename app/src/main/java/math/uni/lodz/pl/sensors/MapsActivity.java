@@ -2,6 +2,7 @@ package math.uni.lodz.pl.sensors;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
@@ -117,29 +118,49 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onLocationChanged(Location location) {
 
         mLastLocation = location;
+
         /*
         if (mCurrLocationMarker != null) {
             mCurrLocationMarker.remove();
         }
         */
+
         //Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
-        markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+       // markerOptions.title("Current Position");
+        markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.red_dot));
         mCurrLocationMarker = mMap.addMarker(markerOptions);
+        /*
+       for(int i=0;i<10;i++)
+       {
+           LatLng latLng2 = new LatLng(52+i, 20);
+           Marker kiel = mMap.addMarker(new MarkerOptions()
+                   .position(latLng2)
+                   .title("Kiel"+i)
+                   .snippet("Kiel is cool")
+                   .icon(BitmapDescriptorFactory.fromResource(R.drawable.red_dot)));
+       }
+       */
+
+
 
         //move map camera
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+        //mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
 
+        /*
         //stop location updates
         if (mGoogleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
+        */
 
     }
+
+
+
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
