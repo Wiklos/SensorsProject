@@ -28,13 +28,20 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     TextView textView;
+    TextView textViewP;
     SensorManager manager;
     Sensor sensor;
+    Sensor pSensor;
+    Sensor mSensor;
+    Sensor lSensor;
+    Sensor gSensor;
+    Sensor aSensor;
+    Sensor trSensor;
+
 
     //flashlight
     private CameraManager mCameraManager;
     private String mCameraId;
-    private ImageButton mTorchOnOffButton;
     private Boolean isTorchOn;
 
 
@@ -43,10 +50,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         textView = (TextView)findViewById(R.id.textView);
+        textViewP = (TextView)findViewById(R.id.textView2);
 
         manager = (SensorManager)getSystemService(Service.SENSOR_SERVICE);
         sensor = manager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        pSensor = manager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        mSensor = manager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        lSensor = manager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+        gSensor = manager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+        aSensor = manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        trSensor = manager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+
+
+        textViewP.setText("Proximity max range" + pSensor.getMaximumRange());
 
         //flashlight
         isTorchOn = false;
@@ -91,6 +110,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onResume() {
         super.onResume();
         manager.registerListener(this, sensor,manager.SENSOR_DELAY_NORMAL);
+        manager.registerListener(this, pSensor,manager.SENSOR_DELAY_NORMAL);
+        //manager.registerListener(this, mSensor,manager.SENSOR_DELAY_NORMAL);
+        //manager.registerListener(this, lSensor,manager.SENSOR_DELAY_NORMAL);
+        //manager.registerListener(this, gSensor,manager.SENSOR_DELAY_NORMAL);
+       // manager.registerListener(this, aSensor,manager.SENSOR_DELAY_NORMAL);
+        //manager.registerListener(this, trSensor,manager.SENSOR_DELAY_NORMAL);
         if(isTorchOn){
             turnOnFlashLight();
         }
@@ -106,8 +131,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        if(sensorEvent.sensor.getType()== Sensor.TYPE_LIGHT)
+        if(sensorEvent.sensor.getType()== Sensor.TYPE_LIGHT) {
             textView.setText("" + sensorEvent.values[0]);
+
         //flashlight
         if(sensorEvent.values[0]<10)
         {
@@ -120,6 +146,30 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             turnOffFlashLight();
             isTorchOn = false;
         }
+        }
+        //proximity
+        if(sensorEvent.sensor.getType()==Sensor.TYPE_PROXIMITY)
+            textViewP.setText("Proximity sensor:" + sensorEvent.values[0]);
+
+        //magnetic
+        if(sensorEvent.sensor.getType()==Sensor.TYPE_MAGNETIC_FIELD)
+        textViewP.setText("Magnetic field strength:" + sensorEvent.values[0]);
+
+        //linear acc
+        if(sensorEvent.sensor.getType()==Sensor.TYPE_LINEAR_ACCELERATION)
+            textViewP.setText("Linear acceletarion value:" + sensorEvent.values[0]);
+        //gravity
+        if(sensorEvent.sensor.getType()==Sensor.TYPE_GRAVITY)
+            textViewP.setText("Gravity:" + sensorEvent.values[0]);
+        //acc
+        if(sensorEvent.sensor.getType()==Sensor.TYPE_ACCELEROMETER)
+            textViewP.setText("Acceleration:" + sensorEvent.values[0]);
+        //TYPE_ROTATION_VECTOR
+        if(sensorEvent.sensor.getType()==Sensor.TYPE_ROTATION_VECTOR)
+            textViewP.setText("Rotation:" + sensorEvent.values[0]);
+
+
+
 
     }
 

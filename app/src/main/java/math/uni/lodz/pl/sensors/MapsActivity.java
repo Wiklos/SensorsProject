@@ -54,12 +54,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     TextView textView;
     SensorManager manager;
     Sensor sensor;
+    //proximity
+    Sensor pSensor;
+    TextView textViewP;
 
     //flashlight
     private CameraManager mCameraManager;
     private String mCameraId;
-    private ImageButton mTorchOnOffButton;
     private Boolean isTorchOn;
+
+    //speed
+    TextView textViewSpeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,9 +81,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //flashlight
         textView = (TextView)findViewById(R.id.textView3);
+        //proximity
+        textViewP = (TextView)findViewById(R.id.textView5);
 
         manager = (SensorManager)getSystemService(Service.SENSOR_SERVICE);
         sensor = manager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        pSensor = manager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
 
         //flashlight
         isTorchOn = false;
@@ -216,6 +224,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
         */
+    //speed
+
+        textViewSpeed = (TextView)findViewById(R.id.textView4);
+        if (location.hasSpeed()) {
+            float speed = (int) ((location.getSpeed()*3600)/1000); //convert m/s to km/h
+            textViewSpeed.setText("Speed:"+speed);
+        } else {
+            // Speed information not available.
+        }
+        textViewSpeed.setText("Cant acces speed");
 
     }
 
@@ -307,6 +325,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onResume() {
         super.onResume();
         manager.registerListener(this, sensor,manager.SENSOR_DELAY_NORMAL);
+        manager.registerListener(this, pSensor,manager.SENSOR_DELAY_NORMAL);
         if(isTorchOn){
             turnOnFlashLight();
         }
@@ -322,8 +341,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        if(sensorEvent.sensor.getType()== Sensor.TYPE_LIGHT)
+        if(sensorEvent.sensor.getType()== Sensor.TYPE_LIGHT) {
             textView.setText("Lumens:" + sensorEvent.values[0]);
+
         //flashlight
         if(sensorEvent.values[0]<10)
         {
@@ -336,6 +356,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             turnOffFlashLight();
             isTorchOn = false;
         }
+        }
+        if(sensorEvent.sensor.getType()==Sensor.TYPE_PROXIMITY)
+            textViewP.setText("Proximity:" + sensorEvent.values[0]);
 
     }
 
@@ -365,11 +388,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public void gotoMaps(View view)
-    {
-        startActivity(new Intent(getApplicationContext(), MapsActivity.class));
     }
 
 }
